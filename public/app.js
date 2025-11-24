@@ -1,10 +1,10 @@
 const products = [
     { id: 101, name: "Kit com 3 Camisetas Básicas", price: 149.90, img: "img/blusas.jfif", desc: "Essencial para o dia a dia. Confeccionadas em algodão 100% fio 30.1 penteado." },
     { id: 102, name: "Cinto Casual Couro Eco", price: 89.90, img: "img/cinto.jfif", desc: "Elegância e sustentabilidade. Produzido em couro sintético de alta resistência." },
-    { id: 103, name: "Bermuda Infantil Comfort", price: 189.90, img: "img/bermudaInfantil.jfif", desc: "Liberdade para brincar. Tecido leve e respirável." },
+    { id: 103, name: "Bermuda Infantil Comfort", price: 189.90, img: "img/bermudainfantil.jfif", desc: "Liberdade para brincar. Tecido leve e respirável." },
     { id: 104, name: "Calça Jeans Slim Fit", price: 129.99, img: "img/calcaJeans.jfif", desc: "O jeans perfeito para qualquer ocasião. Modelagem Slim com elastano." },
     { id: 105, name: "Tênis Nike Casual Run", price: 189.50, img: "img/tenis.jfif", desc: "Estilo esportivo para a cidade. Entressola em EVA." },
-    { id: 106, name: "Tênis Adidas Street", price: 249.90, img: "img/tenisA.jfif", desc: "Um clássico reinventado. Design icônico com as três listras." },
+    { id: 106, name: "Tênis Adidas Street", price: 249.90, img: "img/tenisa.jfif", desc: "Um clássico reinventado. Design icônico com as três listras." },
     { id: 107, name: "Óculos de Sol UV400", price: 189.90, img: "img/oculosSol.jfif", desc: "Proteção e estilo. Lentes polarizadas com proteção UV400." },
     { id: 108, name: "Jaqueta Bomber Premium", price: 289.90, img: "img/jaqueta.jfif", desc: "A peça chave do inverno. Jaqueta estilo aviador com forro térmico." }
 ];
