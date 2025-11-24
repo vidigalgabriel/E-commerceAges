@@ -61,8 +61,8 @@ app.post('/api/checkout', authMiddleware, async (req, res) => {
                 quantity: item.quantity,
             })),
             mode: 'payment',
-            success_url: `http://localhost:3000?success=true&orderId=${order._id}`,
-            cancel_url: 'http://localhost:3000?canceled=true',
+            success_url: `https://e-commerceages.onrender.com?success=true&orderId=${order._id}`,
+            cancel_url: 'https://e-commerceages.onrender.com?canceled=true',
         });
 
         return res.send({ ok: true, url: session.url, orderId: order._id });
