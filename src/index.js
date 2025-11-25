@@ -13,12 +13,15 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+const NEW_BASE_URL = 'https://lojaages.onrender.com';
+
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '..', 'public')));
+
+
+app.use(express.static(path.join(process.cwd(), 'public'))); 
 
 app.use((req, res, next) => {
-    console.log(`📡 [SERVER] ${req.method} ${req.url}`);
     next();
 });
 
@@ -26,7 +29,7 @@ const authMiddleware = (req, res, next) => {
     const authHeader = req.headers.authorization;
     if (!authHeader) return res.status(401).send({ error: 'Token ausente' });
     const parts = authHeader.split(' ');
-    if (!parts.length === 2) return res.status(401).send({ error: 'Erro Token' });
+    if (parts.length !== 2) return res.status(401).send({ error: 'Erro Token' });
     const [scheme, token] = parts;
     jwt.verify(token, 'segredo_do_jwt', (err, decoded) => {
         if (err) return res.status(401).send({ error: 'Token inválido' });
@@ -61,14 +64,13 @@ app.post('/api/checkout', authMiddleware, async (req, res) => {
                 quantity: item.quantity,
             })),
             mode: 'payment',
-            success_url: `https://e-commerceages.onrender.com?success=true&orderId=${order._id}`,
-            cancel_url: 'https://e-commerceages.onrender.com?canceled=true',
+            success_url: `${NEW_BASE_URL}/?success=true&orderId=${order._id.toString()}`,
+            cancel_url: `${NEW_BASE_URL}/?canceled=true`,
         });
 
         return res.send({ ok: true, url: session.url, orderId: order._id });
 
     } catch (err) {
-        console.error("❌ [CHECKOUT] Erro:", err);
         return res.status(400).send({ error: 'Erro no pagamento' });
     }
 });
@@ -98,14 +100,13 @@ app.get('/api/admin/orders', async (req, res) => {
 });
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+  
+    res.sendFile(path.join(process.cwd(), 'public', 'index.html'));
 });
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
-        console.log('✅ Banco Conectado!');
         app.listen(PORT, () => {
-            console.log(`🚀 Servidor pronto em http://localhost:${PORT}`);
         });
     })
     .catch(err => console.error('❌ Erro Banco:', err));

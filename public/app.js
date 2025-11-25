@@ -1,17 +1,26 @@
-const products = [
-    { id: 101, name: "Kit com 3 Camisetas Básicas", price: 149.90, img: "img/blusas.jfif", desc: "Essencial para o dia a dia. Confeccionadas em algodão 100% fio 30.1 penteado." },
-    { id: 102, name: "Cinto Casual Couro Eco", price: 89.90, img: "img/cinto.jfif", desc: "Elegância e sustentabilidade. Produzido em couro sintético de alta resistência." },
-    { id: 103, name: "Bermuda Infantil Comfort", price: 189.90, img: "img/bermudainfantil.jfif", desc: "Liberdade para brincar. Tecido leve e respirável." },
-    { id: 104, name: "Calça Jeans Slim Fit", price: 129.99, img: "img/calcaJeans.jfif", desc: "O jeans perfeito para qualquer ocasião. Modelagem Slim com elastano." },
-    { id: 105, name: "Tênis Nike Casual Run", price: 189.50, img: "img/tenis.jfif", desc: "Estilo esportivo para a cidade. Entressola em EVA." },
-    { id: 106, name: "Tênis Adidas Street", price: 249.90, img: "img/tenisa.jfif", desc: "Um clássico reinventado. Design icônico com as três listras." },
-    { id: 107, name: "Óculos de Sol UV400", price: 189.90, img: "img/oculosSol.jfif", desc: "Proteção e estilo. Lentes polarizadas com proteção UV400." },
-    { id: 108, name: "Jaqueta Bomber Premium", price: 289.90, img: "img/jaqueta.jfif", desc: "A peça chave do inverno. Jaqueta estilo aviador com forro térmico." }
+let products = [
+    { id: 101, name: "Kit com 3 camisetas", price: 149.90, img: "img/blusas.jfif", category: "masculino", promo: false, description: "Kit essencial com 3 camisetas em algodão puro, ideal para o dia a dia. Disponível em cores neutras.", hasSize: true },
+    { id: 104, name: "Calça Jeans Slim", price: 129.99, img: "img/calcajeans.jfif", category: "masculino", promo: false, description: "Calça jeans com corte slim, moderno e confortável. Perfeita para qualquer ocasião.", hasSize: true },
+    { id: 105, name: "Calça Sarja", price: 189.99, img: "img/calcasarja.jfif", category: "masculino", promo: true, description: "Calça de Sarja, moderno e confortável. Perfeita para qualquer ocasião.", hasSize: true },
+    { id: 106, name: "Camisa Oversized", price: 89.99, img: "img/camisaover.jfif", category: "masculino", promo: false, description: "Camisa Overzided preta, moderno e confortável. Perfeita para qualquer ocasião.", hasSize: true },
+    { id: 108, name: "Jaqueta Bomber", price: 289.90, img: "img/jaqueta.jfif", category: "masculino", promo: true, description: "Jaqueta bomber estilosa e versátil. Fechamento em zíper e acabamento premium.", hasSize: true },
+    
+    { id: 103, name: "Bermuda Infantil", price: 189.90, img: "img/infantiladulto.png", category: "infantil", promo: false, description: "Bermuda resistente para aventuras. Cós elástico e tecido respirável para as crianças.", hasSize: true },
+    { id: 109, name: "Camisa Polo Infantil", price: 99.90, img: "img/polo infantil.jpg", category: "infantil", promo: true, description: "Camisa polo Infantil. azul voltadas para as pequenas grandes aventuras", hasSize: true },
+    { id: 110, name: "Regata Basica Infatil", price: 115.00, img: "img/regata.jfif", category: "infantil", promo: false, description: "Regata basica amarela. Conforto e muita diversão garantida para os pequenos.", hasSize: true },
+    { id: 111, name: "Bermuda Basica", price: 89.90, img: "img/bermuda.jfif", category: "infantil", promo: true, description: "Bermuda basica Estampada. Conforto e muita diversão garantida para os pequenos.", hasSize: true },
+
+    { id: 102, name: "Cinto Casual", price: 89.90, img: "img/cinto.jfif", category: "acessorios", promo: false, description: "Cinto de couro legítimo com fivela moderna. Ajuste perfeito e durabilidade.", hasSize: false }, 
+    { id: 107, name: "Óculos de Sol", price: 189.90, img: "img/oculossol.jfif", category: "acessorios", promo: true, description: "Óculos de sol polarizados com proteção UV400. Design aviador clássico e elegante.", hasSize: false },
+    { id: 112, name: "Chapéu Bucket", price: 99.90, img: "img/chapeu.jfif", category: "acessorios", promo: false, description: "Bucket preto para o dia a dia", hasSize: false },
+    { id: 90, name: "Carteira", price: 119.90, img: "img/carteira.jfif", category:"acessorios", promo: false, description: "Carteira Marrom Classica ideal para o dia a dia", hasSize: false },
 ];
 
 let cart = [];
 let slideIndex = 0;
+let currentFilter = 'all';
 
+// A função showSlides foi mantida, mas não será chamada no DOMContentLoaded
 function showSlides() {
     const slides = document.querySelectorAll('.slider-image');
     if (slides.length === 0) return;
@@ -48,6 +57,66 @@ window.navigateTo = function(screenId) {
     window.scrollTo(0,0);
 };
 
+window.filterProducts = function(category) {
+    currentFilter = category;
+    renderProducts();
+    
+    const links = document.querySelectorAll('.main-nav a');
+    links.forEach(link => link.classList.remove('active-filter'));
+    
+    const targetLink = document.querySelector(`.main-nav a[onclick*="${category}"]`);
+    if(targetLink) targetLink.classList.add('active-filter');
+    
+    const title = document.getElementById('current-category-title');
+    if(title) {
+        if (category === 'all') title.innerText = 'Coleção Destaque';
+        else if (category === 'promo') title.innerText = 'Ofertas Imperdíveis';
+        else title.innerText = category.charAt(0).toUpperCase() + category.slice(1);
+    }
+    navigateTo('home');
+};
+
+function renderProducts() {
+    const list = document.getElementById('product-list');
+    if (!list) return;
+    list.innerHTML = '';
+    
+    let filteredProducts = products.filter(p => {
+        if (currentFilter === 'all') return true;
+        if (currentFilter === 'promo') return p.promo;
+        return p.category === currentFilter;
+    });
+
+    filteredProducts.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'product';
+        
+        let priceHTML = `<p class="product-price">R$ ${p.price.toFixed(2)}</p>`;
+        let promoBadge = '';
+        
+        if (p.promo) {
+            promoBadge = '<div class="promo-badge">[PROMOÇÃO]</div>';
+            
+            const originalPrice = p.price / 0.8; 
+            priceHTML = `
+                <p class="product-price promo-price">
+                    <span class="original-price">R$ ${originalPrice.toFixed(2)}</span>
+                    R$ ${p.price.toFixed(2)}
+                </p>
+            `;
+        }
+        
+        div.innerHTML = `
+            ${promoBadge}
+            <img src="${p.img}" alt="${p.name}">
+            <h3>${p.name}</h3>
+            ${priceHTML}
+            <button onclick="window.openProductDetail(${p.id})">Ver Detalhes</button>
+        `;
+        list.appendChild(div);
+    });
+}
+
 window.openProductDetail = function(id) {
     const p = products.find(x => x.id === id);
     if(!p) return;
@@ -57,18 +126,41 @@ window.openProductDetail = function(id) {
     const modalPrice = document.getElementById('modal-price');
     const modalDesc = document.getElementById('modal-desc');
     const modal = document.getElementById('product-modal');
+    const sizeContainer = document.getElementById('size-selection-container');
+    const sizeSelect = document.getElementById('modal-size');
+    const qtyContainer = document.getElementById('qty-selection-container');
+    const qtyInput = document.getElementById('modal-qty');
 
     if (!modal || !modalImg) return;
 
     modalImg.src = p.img;
-    if(modalTitle) modalTitle.innerText = p.name;
-    if(modalPrice) modalPrice.innerText = `R$ ${p.price.toFixed(2)}`;
-    if(modalDesc) modalDesc.innerText = p.desc;
+    modalTitle.innerText = p.name;
+    modalDesc.innerText = p.description;
+    
+    let priceHTML = `R$ ${p.price.toFixed(2)}`;
+    if (p.promo) {
+        const originalPrice = p.price / 0.8;
+        priceHTML = `<span class="original-price" style="text-decoration: line-through; color: #999;">R$ ${originalPrice.toFixed(2)}</span> R$ ${p.price.toFixed(2)}`;
+    }
+    modalPrice.innerHTML = priceHTML;
+    
+    if (p.hasSize) {
+        sizeContainer.classList.remove('hidden');
+        sizeSelect.innerHTML = p.category === 'infantil' 
+            ? '<option value="P_INF">P</option><option value="M_INF">M</option><option value="G_INF">G</option><option value="GG_INF">GG</option>'
+            : '<option value="P">P</option><option value="M">M</option><option value="G">G</option><option value="GG">GG</option>';
+    } else {
+        sizeContainer.classList.add('hidden');
+    }
+    qtyInput.value = 1;
+    qtyContainer.classList.remove('hidden');
     
     const btn = document.getElementById('modal-add-btn');
     if(btn) {
         btn.onclick = function() {
-            window.addToCart(p.id);
+            const quantity = parseInt(qtyInput.value) || 1;
+            const size = p.hasSize ? sizeSelect.value : 'N/A';
+            window.addToCart(p.id, quantity, size);
             window.closeProductModal();
         };
     }
@@ -81,36 +173,18 @@ window.closeProductModal = function() {
     if(modal) modal.classList.add('hidden');
 };
 
-window.addToCart = function(id) {
+window.addToCart = function(id, quantity = 1, size = 'N/A') {
     const p = products.find(x => x.id === id);
-    const item = cart.find(i => i.product.id === id);
+    const item = cart.find(i => i.product.id === id && i.size === size);
     
     if(item) {
-        item.quantity++;
+        item.quantity += quantity;
     } else {
-        cart.push({ product: p, quantity: 1 });
+        cart.push({ product: p, quantity: quantity, size: size });
     }
     updateHeaderCart();
-    alert('Produto adicionado ao carrinho!');
+    alert(`${quantity}x ${p.name} (Tam: ${size}) adicionado ao carrinho!`);
 };
-
-function renderProducts() {
-    const list = document.getElementById('product-list');
-    if (!list) return;
-    list.innerHTML = '';
-
-    products.forEach(p => {
-        const div = document.createElement('div');
-        div.className = 'product';
-        div.innerHTML = `
-            <img src="${p.img}" alt="${p.name}">
-            <h3>${p.name}</h3>
-            <p>R$ ${p.price.toFixed(2)}</p>
-            <button onclick="window.openProductDetail(${p.id})">Ver Detalhes</button>
-        `;
-        list.appendChild(div);
-    });
-}
 
 function updateHeaderCart() {
     const count = cart.reduce((acc, item) => acc + item.quantity, 0);
@@ -126,18 +200,30 @@ function updateCartPage() {
     list.innerHTML = '';
     let total = 0;
     
-    cart.forEach(item => {
+    cart.forEach((item, index) => {
         total += item.product.price * item.quantity;
         const li = document.createElement('li');
         li.innerHTML = `
-            <span>${item.product.name} (x${item.quantity})</span>
-            <span>R$ ${(item.product.price * item.quantity).toFixed(2)}</span>
+            <span>${item.product.name} (x${item.quantity}) ${item.size !== 'N/A' ? `[${item.size}]` : ''}</span>
+            <span>R$ ${(item.product.price * item.quantity).toFixed(2)} 
+            <button onclick="window.removeFromCart(${index})" style="background: none; border: none; color: #e74c3c; margin-left: 10px; font-size: 1rem;">&times;</button></span>
         `;
         list.appendChild(li);
     });
     
     if(totalEl) totalEl.innerText = `Total: R$ ${total.toFixed(2)}`;
+    
+    if (cart.length === 0) {
+        list.innerHTML = '<li style="justify-content: center; color: #666; padding: 30px;">Seu carrinho está vazio.</li>';
+    }
 }
+
+window.removeFromCart = function(index) {
+    cart.splice(index, 1);
+    updateHeaderCart();
+    updateCartPage();
+    alert('Item removido do carrinho.');
+};
 
 window.openLoginModal = function() { 
     const m = document.getElementById('auth-modal');
@@ -148,28 +234,77 @@ window.closeAuthModal = function() {
     if(m) m.classList.add('hidden'); 
 };
 
+window.openFooterModal = function(type) {
+    const modal = document.getElementById('info-modal');
+    const titleEl = document.getElementById('info-modal-title');
+    const contentEl = document.getElementById('info-modal-content');
+
+    if (!modal || !titleEl || !contentEl) return;
+
+    let title, contentHTML;
+
+    if (type === 'faq') {
+        title = 'Perguntas Frequentes (FAQ)';
+        contentHTML = '<p><strong>Posso trocar meu produto?</strong> Sim, você tem 30 dias para troca fácil, conforme política.</p><p><strong>Qual o prazo de entrega?</strong> O prazo varia conforme sua região e o tipo de frete escolhido.</p>';
+    } else if (type === 'privacy') {
+        title = 'Política de Privacidade';
+        contentHTML = '<p>Seus dados estão seguros conosco. Não compartilhamos suas informações pessoais com terceiros.</p><p>Utilizamos cookies apenas para melhorar sua experiência na loja.</p>';
+    } else if (type === 'contact') {
+        title = 'Contate-nos';
+        contentHTML = `
+            <p>Entre em contato conosco!</p>
+            <form>
+                <input type="text" placeholder="Seu Nome" required>
+                <input type="email" placeholder="Seu Email" required>
+                <textarea rows="4" placeholder="Sua Mensagem" style="width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px;"></textarea>
+                <button type="submit" style="background-color: var(--accent-color);">Enviar Mensagem</button>
+            </form>
+        `;
+    } else if (type === 'subscribe') {
+        title = 'Inscrições (Newsletter)';
+        contentHTML = `
+            <p>Inscreva-se para receber novidades e ofertas exclusivas!</p>
+            <form>
+                <input type="email" placeholder="Seu Email" required>
+                <button type="submit" style="background-color: #28a745;">Inscrever</button>
+            </form>
+        `;
+    }
+
+    titleEl.innerText = title;
+    contentEl.innerHTML = contentHTML;
+    modal.classList.remove('hidden');
+};
+
+window.closeInfoModal = function() {
+    const modal = document.getElementById('info-modal');
+    if(modal) modal.classList.add('hidden');
+};
+
 window.checkAuth = function() {
     const userStr = localStorage.getItem('user');
     const loginBtn = document.getElementById('login-btn');
     const logoutBtn = document.getElementById('logout-btn');
-    const navProfile = document.getElementById('nav-profile');
+    const profileBtn = document.getElementById('profile-btn');
     const navAdmin = document.getElementById('nav-admin');
 
-    if (!loginBtn || !logoutBtn) return;
+    if (!loginBtn || !logoutBtn || !profileBtn) return;
 
     if(userStr) {
         const user = JSON.parse(userStr);
         loginBtn.classList.add('hidden');
         logoutBtn.classList.remove('hidden');
-        if(navProfile) navProfile.classList.remove('hidden');
+        profileBtn.classList.remove('hidden');
         
         if(user.email.includes('admin') || user.isAdmin) { 
             if(navAdmin) navAdmin.classList.remove('hidden');
+        } else {
+             if(navAdmin) navAdmin.classList.add('hidden');
         }
     } else {
         loginBtn.classList.remove('hidden');
         logoutBtn.classList.add('hidden');
-        if(navProfile) navProfile.classList.add('hidden');
+        profileBtn.classList.add('hidden');
         if(navAdmin) navAdmin.classList.add('hidden');
     }
 };
@@ -245,12 +380,11 @@ async function loadAdminData() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    renderProducts();
+    filterProducts(currentFilter);
     window.checkAuth();
     updateHeaderCart();
     
-    // INICIA O CARROSSEL
-    showSlides(); 
+    // showSlides(); <-- REMOVIDO PARA TESTE ESTÁTICO
 
     const urlParams = new URLSearchParams(window.location.search);
     const success = urlParams.get('success');
@@ -283,7 +417,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 productId: i.product.id, 
                 name: i.product.name, 
                 price: i.product.price, 
-                quantity: i.quantity 
+                quantity: i.quantity,
+                size: i.size
             }));
             
             try {
